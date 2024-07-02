@@ -6,27 +6,25 @@ const app = express();
 const port = 4000;
 
 app.get("/api/hello", async (req, res) => {
+  const visitorName = req.query.visitor_name;
+  const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  console.log("Received request from IP:", clientIp);
+
   try {
     const locationResponse = await axios.get("http://ip-api.com/json/");
     const locationData = locationResponse.data;
-    const clientIp = locationData.query;
-
-    console.log("Received request from IP:", clientIp);
-    console.log(locationData)
+    console.log("Location data received:", locationData);
 
     const weatherResponse = await axios.get(
-      `http://api.weatherapi.com/v1/current.json?key=${process.env.OPENWEATHERMAP_API_KEY}&q=${clientIp}&aqi=yes`
+      `http://api.weatherapi.com/v1/current.json?key=${process.env.OPENWEATHERMAP_API_KEY}&q=${locationData.city}&aqi=yes`
     );
 
     const weatherData = weatherResponse.data;
-    console.log("hereeeee",weatherData)
-
-    const visitorName = req.query.visitor_name;
 
     res.json({
       client_ip: clientIp,
-      location: weatherData.location.region,
-      greeting: `Hello, ${visitorName}!, the temperature is ${weatherData.current.temp_f} degrees Celsius in ${weatherData.location.region}`,
+      location: locationData.city,
+      greeting: `Hello, ${visitorName}!, the temperature is ${weatherData.current.temp_c} degrees Celsius in ${locationData.city}`,
     });
   } catch (error) {
     console.error("Error fetching data:", error);
