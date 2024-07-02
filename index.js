@@ -9,21 +9,10 @@ app.get("/api/hello", async (req, res) => {
   const visitorName = req.query.visitor_name;
 
   try {
-    // Fetch public IP address
-    const ipResponse = await axios.get("http://api64.ipify.org?format=json");
+    // Fetch public IP address information
+    const ipResponse = await axios.get("http://ipinfo.io?token=90ce3f25338f13");
     const clientIp = ipResponse.data.ip;
-    console.log("Client IP:", clientIp);
-
-    // Fetch location data
-    const locationResponse = await axios.get(`http://ip-api.com/json/${clientIp}`);
-    const locationData = locationResponse.data;
-
-    if (locationData.status !== "success") {
-      console.error("Location API error response:", locationData);
-      throw new Error("Failed to fetch location data");
-    }
-
-    console.log("Location data received:", locationData);
+    const locationData = ipResponse.data;
 
     // Fetch weather data
     const weatherResponse = await axios.get(
@@ -31,12 +20,11 @@ app.get("/api/hello", async (req, res) => {
     );
 
     const weatherData = weatherResponse.data;
-    console.log("Weather data received:", weatherData.location.name);
 
     res.json({
       client_ip: clientIp,
-      location: weatherData.location.name,
-      greeting: `Hello, ${visitorName}!, the temperature is ${weatherData.current.temp_c} degrees Celsius in ${weatherData.location.name}`,
+      location: locationData.city,
+      greeting: `Hello, ${visitorName}!, the temperature is ${weatherData.current.temp_c} degrees Celsius in ${locationData.city}`,
     });
   } catch (error) {
     console.error("Error fetching data:", error.message);
