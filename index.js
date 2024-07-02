@@ -31,12 +31,12 @@ app.get("/api/hello", async (req, res) => {
     );
 
     const weatherData = weatherResponse.data;
-    console.log("Weather data received:", weatherData);
+    console.log("Weather data received:", weatherData.location.name);
 
     res.json({
       client_ip: clientIp,
-      location: locationData.city,
-      greeting: `Hello, ${visitorName}!, the temperature is ${weatherData.current.temp_c} degrees Celsius in ${locationData.city}`,
+      location: weatherData.location.name,
+      greeting: `Hello, ${visitorName}!, the temperature is ${weatherData.current.temp_c} degrees Celsius in ${weatherData.location.name}`,
     });
   } catch (error) {
     console.error("Error fetching data:", error.message);
