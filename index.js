@@ -26,7 +26,7 @@ app.get("/api/hello", async (req, res) => {
     res.json({
       client_ip: clientIp,
       location: weatherData.location.region,
-      greeting: `Hello, ${visitorName}!, the temperature is ${weatherData.current.temp_f} degrees Celsius in ${locationData.city}`,
+      greeting: `Hello, ${visitorName}!, the temperature is ${weatherData.current.temp_f} degrees Celsius in ${weatherData.location.region}`,
     });
   } catch (error) {
     console.error("Error fetching data:", error);
